@@ -1,0 +1,41 @@
+# 全局配置（可被区服覆盖）
+server:
+  http_port: 8080   # 默认端口，区服如有自定义则覆盖
+db:
+  dsn: "root:@tcp(127.0.0.1:3306)/slg_gameD?charset=utf8mb4&parseTime=True"
+redis:
+  addr: "127.0.0.1:6379"
+  password: ""
+internal_secret: "Ppi6m0+i67NloQoD0yv/7VwScUnD3ygybz/fqkVVlUk="
+servers:
+  - id: 1
+    name: "王国1服"
+    status: 1
+    open_time: 1700000000
+    max_players: 20000
+    http_port: 8080            # ← S1 监听端口
+    db:
+      dsn: "root:@tcp(127.0.0.1:3306)/slg_gameD?charset=utf8mb4&parseTime=True"
+    redis:
+      addr: "127.0.0.1:6379"
+      password: ""
+      prefix: "s1:"           # Redis key 前缀隔离
+    cross: "http://s1-internal:8081"
+    chatUrl: "test"
+    kafka: "test"
+
+  - id: 2
+    name: "王国2服"
+    status: 1
+    open_time: 1700000000
+    max_players: 20000
+    http_port: 8080            # ← S2 监听端口
+    db:
+      dsn: "root:@tcp(127.0.0.1:3306)/slg_s2?charset=utf8mb4&parseTime=True"
+    redis:
+      addr: "127.0.0.1:6379"
+      password: ""
+      prefix: "s2:"
+    cross: "http://s1-internal:8082"
+    chatUrl: "test"
+    kafka: "test"

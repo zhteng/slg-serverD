@@ -1,0 +1,29 @@
+width: 600
+height: 600
+obstacle_ratio: 0.015
+resources:
+  - min_level: 1
+    max_level: 3
+    count: 2000
+    min_distance: 5.0
+    regenerate: 28800   # 8小时
+  - min_level: 4
+    max_level: 6
+    count: 500
+    min_distance: 8.0
+    regenerate: 43200
+monsters:
+  - min_level: 1
+    max_level: 5
+    count: 3000
+    min_distance: 4.0
+    respawn: 7200       # 2小时
+  - min_level: 6
+    max_level: 10
+    count: 1000
+    min_distance: 6.0
+    respawn: 14400
+strongholds:
+  - level: 1
+    count: 100
+    min_distance: 10.0

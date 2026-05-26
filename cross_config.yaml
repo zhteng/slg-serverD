@@ -1,0 +1,8 @@
+# 跨服服务自身端口
+port: 9090
+# 原服内部 API 地址映射
+server_map:
+  1: "127.0.0.1:8080"  # 区服1内网地址
+  2: "127.0.0.1:8080"
+# 原服内部接口鉴权密钥  export INTERNAL_SECRET=$(openssl rand -base64 32)
+internal_secret: "Ppi6m0+i67NloQoD0yv/7VwScUnD3ygybz/fqkVVlUk="

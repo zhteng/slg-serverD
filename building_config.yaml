@@ -1,0 +1,33 @@
+# building_config.yaml
+buildings:
+  b1:
+    id: "b1"
+    name: "主城"
+    max_level: 30
+    base_time: 20       # 基础升级时间（秒）
+  b2:
+    id: "b2"
+    name: "射手营"
+    max_level: 20
+    base_time: 20
+  b3:
+    id: "b3"
+    name: "盾兵营"
+    max_level: 25
+    base_time: 8
+  b4:
+    id: "b4"
+    name: "矛兵营"
+    max_level: 15
+    base_time: 4
+  # 以后新增建筑只需在此添加即可
+  b5:
+    id: "b5"
+    name: "医疗所"
+    max_level: 15
+    base_time: 4
+  b6:
+    id: "b6"
+    name: "指挥所"
+    max_level: 15
+    base_time: 4

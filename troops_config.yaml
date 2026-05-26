@@ -1,0 +1,26 @@
+# troops_config.yaml
+soldiers:
+  a10001:
+    id: "a10001"
+    name: "a10001"
+    train_time: 10      # 每训练1个所需时间（秒）
+  a10002:
+    id: "a10002"
+    name: "a10002"
+    train_time: 10      # 每训练1个所需时间（秒）
+  a10003:
+    id: "a10003"
+    name: "a10003"
+    train_time: 10      # 每训练1个所需时间（秒）
+  a10004:
+    id: "a10004"
+    name: "a10004"
+    train_time: 10      # 每训练1个所需时间（秒）
+  a10005:
+    id: "a10005"
+    name: "a10005"
+    train_time: 10      # 每训练1个所需时间（秒）
+  a10006:
+    id: "a10006"
+    name: "a10006"
+    train_time: 10      # 每训练1个所需时间（秒）
