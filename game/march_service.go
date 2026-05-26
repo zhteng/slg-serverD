@@ -621,3 +621,28 @@ func generateMarchKey(uid int64, startTime int64) string {
 func generateReturnKey(uid int64, originalKey string) string {
 	return fmt.Sprintf("return_%d_%s_%d", uid, originalKey, time.Now().UnixNano())
 }
+
+// CanRelocate 检查玩家是否可以搬迁
+func (s *MarchService) CanRelocate(ctx context.Context, uid int64) error {
+	u, err := s.userSvc.Load(ctx, uid)
+	if err != nil {
+		return err
+	}
+
+	// 冷却检查
+	if u.LastRelocateTime > time.Now().Unix() {
+		return errors.New("relocate cooldown (h)")
+	}
+
+	t, err := s.troopSvc.Load(ctx, u.Uid)
+	if err != nil {
+		return err
+	}
+
+	// 如果有任何行军（attack 非空），则不能搬迁
+	if t.Attack != nil {
+		return errors.New("attack is not empty")
+	}
+
+	return nil
+}

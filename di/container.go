@@ -22,6 +22,8 @@ type Container struct {
 	Hub             *ws.Hub
 	ServerService   *game.ServerService
 	MapService      *game.MapService
+	PlayerService   *game.PlayerService
+	ArenaService    *game.ArenaService
 }
 
 // NewContainer 根据数据库和 Redis 客户端构建所有服务
@@ -63,6 +65,12 @@ func NewContainer(dbConn *sql.DB, rdb *redis.Client, cfg *conf.Config, rt *conf.
 
 	marchSvc := game.NewMarchService(troopsSvc, userSvc, mapSvc, lockSvc, rdb, pushSvc)
 
+	// 玩家所有信息
+	playerSvc := game.NewPlayerService(userSvc, troopsSvc, buildingSvc)
+
+	// 创建竞技场服务
+	arenaSvc := game.NewArenaService(rdb, userSvc, lockSvc)
+
 	return &Container{
 		UserService:     userSvc,
 		AllianceService: allianceSvc,
@@ -72,5 +80,7 @@ func NewContainer(dbConn *sql.DB, rdb *redis.Client, cfg *conf.Config, rt *conf.
 		Hub:             hub,
 		ServerService:   serverSvc,
 		MapService:      mapSvc,
+		PlayerService:   playerSvc,
+		ArenaService:    arenaSvc,
 	}
 }

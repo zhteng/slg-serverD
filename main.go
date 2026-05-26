@@ -175,6 +175,8 @@ func main() {
 		ctn.Hub,
 		ctn.ServerService,
 		ctn.MapService,
+		ctn.PlayerService,
+		ctn.ArenaService,
 		rtCfg.InternalSecret,
 	)
 	router := apiServer.SetupRouter()

@@ -454,7 +454,7 @@ func (ms *MapService) RelocateCity(ctx context.Context, uid int64, toX, toY int)
 	}
 
 	// 玩家状态校验（冷却、战斗、行军等）
-	if ms.userSvc.CanRelocate(ctx, uid) != nil {
+	if ms.marchSvc.CanRelocate(ctx, uid) != nil {
 		return errors.New("user not relocated")
 	}
 
@@ -594,7 +594,10 @@ func (ms *MapService) loadAllCells(ctx context.Context) error {
 	}
 
 	for _, cell := range cells {
-		cell.Queue = make([]*data.MarchQueueItem, 0)
+		if cell.Queue == nil {
+			cell.Queue = make([]*data.MarchQueueItem, 0)
+		}
+
 		// 放入内存切片
 		shard := ms.getShard(cell.X, cell.Y)
 		shard.Mu.Lock()

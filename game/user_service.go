@@ -14,10 +14,11 @@ import (
 )
 
 type UserService struct {
-	repo     *db.UserRepo
-	cache    *cache.UserCache
-	lockSvc  *LockService
-	troopSvc *TroopsService
+	repo    *db.UserRepo
+	cache   *cache.UserCache
+	lockSvc *LockService
+	//troopSvc *TroopsService
+	arenaSvc *ArenaService
 }
 
 // 玩家状态常量
@@ -192,6 +193,9 @@ func (s *UserService) Authenticate(ctx context.Context, username, password strin
 		return nil, err
 	}
 
+	// 更新竞技场战力榜
+	s.arenaSvc.UpdatePower(ctx, user.Uid, user.Power)
+
 	return user, nil
 }
 
@@ -247,29 +251,4 @@ func (s *UserService) SyncCrossData(ctx context.Context, uid int64, troops map[s
 	}
 
 	return s.Save(ctx, u)
-}
-
-// CanRelocate 检查玩家是否可以搬迁
-func (s *UserService) CanRelocate(ctx context.Context, uid int64) error {
-	u, err := s.Load(ctx, uid)
-	if err != nil {
-		return err
-	}
-
-	// 冷却检查
-	if u.LastRelocateTime > time.Now().Unix() {
-		return errors.New("relocate cooldown (h)")
-	}
-
-	t, err := s.troopSvc.Load(ctx, u.Uid)
-	if err != nil {
-		return err
-	}
-
-	// 如果有任何行军（attack 非空），则不能搬迁
-	if t.Attack != nil {
-		return errors.New("attack is not empty")
-	}
-
-	return nil
 }

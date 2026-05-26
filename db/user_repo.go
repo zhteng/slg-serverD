@@ -128,3 +128,22 @@ func (r *UserRepo) IsCoordinateOccupied(ctx context.Context, x, y int) (bool, er
 
 	return count > 0, nil
 }
+
+// 按战力排名获取玩家
+func (r *UserRepo) GetUsersByPower(ctx context.Context, offset, limit int) ([]*data.User, error) {
+	rows, err := r.db.QueryContext(ctx,
+		"SELECT uid, power FROM users ORDER BY power DESC LIMIT ? OFFSET ?", limit, offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var users []*data.User
+	for rows.Next() {
+		var u data.User
+		if err := rows.Scan(&u.Uid, &u.Power); err != nil {
+			return nil, err
+		}
+		users = append(users, &u)
+	}
+	return users, nil
+}

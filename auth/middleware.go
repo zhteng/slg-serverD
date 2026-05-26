@@ -5,6 +5,7 @@ package auth
 */
 import (
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -22,6 +23,42 @@ func RefreshTokenAuth() gin.HandlerFunc {
 
 func tokenAuthMiddleware(expectedType TokenType, secret []byte) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		// ---------- Debug 模式：跳过 Token 验证 ----------
+		if IsDebug {
+			uidStr := c.GetHeader("X-Debug-UID")
+			if uidStr == "" {
+				uidStr = c.Query("uid")
+			}
+
+			serverIdStr := c.GetHeader("X-Server-Id")
+			if serverIdStr == "" {
+				serverIdStr = c.Query("serverId")
+			}
+
+			if uidStr == "" || serverIdStr == "" {
+				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+					"code": 0,
+					"msg":  "debug mode: missing",
+				})
+				return
+			}
+
+			uid, err := strconv.ParseInt(uidStr, 10, 64)
+			serverId, err := strconv.ParseInt(serverIdStr, 10, 64)
+			if err != nil || serverId == 0 {
+				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+					"code": 0,
+					"msg":  "debug mode: invalid error",
+				})
+				return
+			}
+
+			c.Set("uid", uid)
+			c.Set("server_id", serverId)
+			c.Next()
+			return
+		}
+
 		// 提取 token
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {

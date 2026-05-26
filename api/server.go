@@ -22,12 +22,14 @@ type Server struct {
 	hub         *ws.Hub
 	serverSvc   *game.ServerService
 	mapSvc      *game.MapService
+	playerSvc   *game.PlayerService
+	arenaSvc    *game.ArenaService
 
 	internalSecret string
 }
 
-func NewServer(userSvc *game.UserService, allianceSvc *game.AllianceService, buildingSvc *game.BuildingService, troopsSvc *game.TroopsService, marchSvc *game.MarchService, hub *ws.Hub, serverSvc *game.ServerService, mapSvc *game.MapService, internalSecret string) *Server {
-	return &Server{userSvc: userSvc, allianceSvc: allianceSvc, buildingSvc: buildingSvc, troopsSvc: troopsSvc, marchSvc: marchSvc, hub: hub, serverSvc: serverSvc, mapSvc: mapSvc, internalSecret: internalSecret}
+func NewServer(userSvc *game.UserService, allianceSvc *game.AllianceService, buildingSvc *game.BuildingService, troopsSvc *game.TroopsService, marchSvc *game.MarchService, hub *ws.Hub, serverSvc *game.ServerService, mapSvc *game.MapService, playerSvc *game.PlayerService, arenaSvc *game.ArenaService, internalSecret string) *Server {
+	return &Server{userSvc: userSvc, allianceSvc: allianceSvc, buildingSvc: buildingSvc, troopsSvc: troopsSvc, marchSvc: marchSvc, hub: hub, serverSvc: serverSvc, mapSvc: mapSvc, playerSvc: playerSvc, arenaSvc: arenaSvc, internalSecret: internalSecret}
 }
 
 // SetupRouter 配置路由，返回 Gin 引擎
@@ -49,6 +51,8 @@ func (s *Server) SetupRouter() *gin.Engine {
 	api := r.Group("/")
 	api.Use(auth.AccessTokenAuth())
 	{
+		// 玩家信息
+		api.GET("/user/info", s.userInfo)
 		// 建筑相关
 		api.POST("/building/upgrade", s.upgradeBuilding)
 
@@ -65,12 +69,15 @@ func (s *Server) SetupRouter() *gin.Engine {
 		// 军团
 		//api.POST("/alliance/create", s.createAlliance)
 		//api.POST("/alliance/kick", s.kickMember)
-		// 玩家信息
-		//api.GET("/user/info", s.userInfo)
 
 		api.POST("/logout", s.logout)
 
 		api.GET("/admin/config", s.adminConfig) // 查看当前服配置（可增加简单鉴权）
+
+		// 竞技场
+		api.GET("/arena/panel", s.GetPanel)
+		api.POST("/arena/challenge", s.Challenge)
+		api.POST("/arena/buy_chance", s.BuyChance)
 	}
 
 	internal := r.Group("/internal")
@@ -121,6 +128,24 @@ func (s *Server) SetupRouter() *gin.Engine {
 		},
 	})
 }*/
+
+// 获取玩家信息
+func (s *Server) userInfo(c *gin.Context) {
+	uid := c.GetInt64("uid")
+
+	uInfo, err := s.playerSvc.GetUserInfo(c.Request.Context(), uid)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"code": 0,
+			"msg":  err.Error(),
+		})
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"code": 1,
+		"msg":  "success",
+		"data": uInfo,
+	})
+}
 
 // upgradeBuilding 建筑升级（需要 JWT 鉴权）
 func (s *Server) upgradeBuilding(c *gin.Context) {

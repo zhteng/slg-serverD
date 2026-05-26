@@ -41,10 +41,10 @@ type SoldierQueue struct {
 
 type Troops struct {
 	Uid        int64                   `json:"uid"`
-	Troops     map[string]int          `json:"troops"`      // 可用士兵
-	Damaged    map[string]int          `json:"damaged"`     // 伤兵
-	Attack     map[string]*MarchAttack `json:"attack"`      // 进行中的行军
-	Queue      []*SoldierQueue         `json:"queue"`       // 训练队列
-	UpdateTime int64                   `json:"update_time"` // 最近更新时间
-	Version    int                     `json:"version"`     // 乐观锁版本号
+	Troops     map[string]int          `json:"troops"`  // 可用士兵
+	Damaged    map[string]int          `json:"damaged"` // 伤兵
+	Attack     map[string]*MarchAttack `json:"attack"`  // 进行中的行军
+	Queue      []*SoldierQueue         `json:"queue"`   // 训练队列
+	UpdateTime int64                   `json:"-"`       // 最近更新时间
+	Version    int                     `json:"-"`       // 乐观锁版本号
 }
