@@ -39,9 +39,6 @@ func NewArenaService(rdb *redis.Client, userSvc *UserService, lockSvc *LockServi
 // 战力变化时更新或登录注册时更新
 func (s *ArenaService) UpdatePower(ctx context.Context, uid int64, newPower int64) {
 	// 直接更新该成员的 score（战力），排名自动调整
-	fmt.Println("------------------------1")
-	fmt.Println(s)
-	fmt.Println("-------------------------2")
 	s.rdb.ZAdd(ctx, data.ArenaRankKey, &redis.Z{
 		Score:  float64(newPower),
 		Member: uid,
